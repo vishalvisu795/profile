@@ -9,6 +9,7 @@ ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
 # Install system dependencies including Rust for pydantic-core compilation
+# Also install CA certificates for SSL/TLS connections
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
@@ -16,9 +17,11 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     pkg-config \
     libssl-dev \
+    ca-certificates \
     && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable \
     && . $HOME/.cargo/env \
     && rustc --version \
+    && update-ca-certificates \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

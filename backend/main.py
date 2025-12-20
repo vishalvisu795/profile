@@ -9,20 +9,27 @@ from typing import Optional
 app = FastAPI(title="Freelancer Portfolio API", version="1.0.0")
 
 # CORS middleware to allow frontend to communicate with backend
+# Get allowed origins from environment variable or use defaults
+ALLOWED_ORIGINS = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:3000,http://127.0.0.1:3000"
+).split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# MongoDB connection string
-# Note: If authentication fails, update the password in the URL below
-# The password is currently URL-encoded. Replace %3Cvishal5676%3E with your actual password (URL-encoded)
-MONGODB_URL = "mongodb+srv://vishal5676:vishal5676@vishalvisu25.ssyaodm.mongodb.net/"
-DATABASE_NAME = "user_db"
-COLLECTION_NAME = "customer_details"
+# MongoDB connection string - use environment variable for security
+MONGODB_URL = os.getenv(
+    "MONGODB_URL",
+    "mongodb+srv://vishal5676:vishal5676@vishalvisu25.ssyaodm.mongodb.net/"
+)
+DATABASE_NAME = os.getenv("DATABASE_NAME", "user_db")
+COLLECTION_NAME = os.getenv("COLLECTION_NAME", "customer_details")
 
 # MongoDB client
 client = None
@@ -35,7 +42,17 @@ async def startup_db_client():
     """Initialize MongoDB connection on startup"""
     global client, database, collection
     try:
-        client = AsyncIOMotorClient(MONGODB_URL)
+        # Configure MongoDB connection with SSL/TLS settings
+        # Add tlsCAFile=None to use system CA certificates
+        # Add serverSelectionTimeoutMS for better error handling
+        client = AsyncIOMotorClient(
+            MONGODB_URL,
+            tls=True,
+            tlsAllowInvalidCertificates=False,
+            serverSelectionTimeoutMS=5000,
+            connectTimeoutMS=10000,
+            socketTimeoutMS=20000
+        )
         database = client[DATABASE_NAME]
         collection = database[COLLECTION_NAME]
         # Test connection
@@ -43,6 +60,7 @@ async def startup_db_client():
         print("✅ Successfully connected to MongoDB")
     except Exception as e:
         print(f"❌ Error connecting to MongoDB: {e}")
+        print(f"❌ MongoDB URL: {MONGODB_URL[:50]}...")  # Print partial URL for debugging
 
 
 @app.on_event("shutdown")
