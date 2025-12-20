@@ -10,7 +10,12 @@ const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({ type: null, message: '' });
 
-  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+  // Use Railway backend API URL from environment variable
+  // Falls back to localhost for local development
+  const API_URL = 'https://profile-production-a4cc.up.railway.app';
+  
+  // Debug: Log API URL (remove in production)
+  console.log('🔗 API URL:', API_URL);
 
   const handleChange = (e) => {
     setFormData({
