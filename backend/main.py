@@ -10,18 +10,21 @@ app = FastAPI(title="Freelancer Portfolio API", version="1.0.0")
 
 # CORS middleware to allow frontend to communicate with backend
 # Get allowed origins from environment variable or use defaults
-# Include Vercel frontend URL by default
+# Include Vercel frontend URL and localhost by default
 DEFAULT_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000,https://profile-two-lilac.vercel.app"
-ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", DEFAULT_ORIGINS).split(",")
-# Strip whitespace from origins
-ALLOWED_ORIGINS = [origin.strip() for origin in ALLOWED_ORIGINS]
+ALLOWED_ORIGINS_STR = os.getenv("ALLOWED_ORIGINS", DEFAULT_ORIGINS)
+ALLOWED_ORIGINS = [origin.strip() for origin in ALLOWED_ORIGINS_STR.split(",") if origin.strip()]
+
+# Debug: Print allowed origins (remove in production if sensitive)
+print(f"🌐 Allowed CORS origins: {ALLOWED_ORIGINS}")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # MongoDB connection string - use environment variable for security
@@ -93,7 +96,8 @@ async def root():
     return {
         "status": "ok",
         "message": "Freelancer Portfolio API is running",
-        "version": "1.0.0"
+        "version": "1.0.0",
+        "cors_origins": ALLOWED_ORIGINS
     }
 
 
