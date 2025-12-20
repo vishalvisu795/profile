@@ -47,8 +47,6 @@ async def startup_db_client():
         # Add serverSelectionTimeoutMS for better error handling
         client = AsyncIOMotorClient(
             MONGODB_URL,
-            tls=True,
-            tlsAllowInvalidCertificates=False,
             serverSelectionTimeoutMS=5000,
             connectTimeoutMS=10000,
             socketTimeoutMS=20000
