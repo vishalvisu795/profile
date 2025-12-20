@@ -10,10 +10,11 @@ app = FastAPI(title="Freelancer Portfolio API", version="1.0.0")
 
 # CORS middleware to allow frontend to communicate with backend
 # Get allowed origins from environment variable or use defaults
-ALLOWED_ORIGINS = os.getenv(
-    "ALLOWED_ORIGINS",
-    "http://localhost:3000,http://127.0.0.1:3000"
-).split(",")
+# Include Vercel frontend URL by default
+DEFAULT_ORIGINS = "http://localhost:3000,http://127.0.0.1:3000,https://profile-two-lilac.vercel.app"
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", DEFAULT_ORIGINS).split(",")
+# Strip whitespace from origins
+ALLOWED_ORIGINS = [origin.strip() for origin in ALLOWED_ORIGINS]
 
 app.add_middleware(
     CORSMiddleware,
