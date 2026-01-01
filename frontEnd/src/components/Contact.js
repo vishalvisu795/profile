@@ -79,8 +79,16 @@ const Contact = () => {
               <div className="info-icon">📧</div>
               <h3>Email</h3>
               <p>Available for freelance projects</p>
-              <a href="mailto:your.email@example.com" className="info-link">
-                your.email@example.com
+              <a href="mailto:amvi2511@gmail.com" className="info-link">
+                amvi2511@gmail.com
+              </a>
+            </div>
+            <div className="info-card">
+              <div className="info-icon">📞</div>
+              <h3>Phone</h3>
+              <p>Call or text me anytime</p>
+              <a href="tel:+917484081172" className="info-link">
+                +91 7484081172
               </a>
             </div>
             <div className="info-card">
@@ -118,7 +126,7 @@ const Contact = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                placeholder="your.email@example.com"
+                placeholder="amvi2511@gmail.com"
               />
             </div>
             <div className="form-group">
